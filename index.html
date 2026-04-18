@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luz da Palavra — Plataforma de Ensino Cristão</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --gold-pale: #F9F3E3;
+    --cream: #FDF8F0;
+    --ivory: #FEFCF7;
+    --brown-deep: #3B2A1A;
+    --brown-mid: #6B4F35;
+    --brown-light: #A07850;
+    --sage: #7A8C6E;
+    --sage-light: #B8C9AE;
+    --rose: #C9826B;
+    --rose-pale: #F5E8E4;
+    --sky: #7EA8C9;
+    --sky-pale: #E8F2FA;
+    --white: #FFFFFF;
+    --shadow: rgba(59,42,26,0.15);
+    --shadow-deep: rgba(59,42,26,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--cream);
+    color: var(--brown-deep);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== MODAIS ===== */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(30,18,8,0.85);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.hidden { display: none; }
+
+  .modal-box {
+    background: var(--ivory);
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 30px 80px var(--shadow-deep);
+    border: 1px solid var(--gold-light);
+    position: relative;
+    animation: slideUp 0.4s ease;
+  }
+
+  .modal-cross {
+    text-align: center;
+    font-size: 32px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--brown-deep);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .modal-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--brown-light);
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+  .modal-verse {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--brown-light);
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 12px;
+    background: var(--gold-pale);
+    border-radius: 10px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brown-mid);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gold-light);
+    border-radius: 10px;
+    background: var(--cream);
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    color: var(--brown-deep);
+    transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-group input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.4);
+  }
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--brown-mid);
+    border: 1.5px solid var(--gold-light);
+    border-radius: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover { background: var(--gold-pale); }
+
+  .modal-link {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--brown-light);
+  }
+  .modal-link a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .modal-link a:hover { text-decoration: underline; }
+
+  .error-msg {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+    text-align: center;
+  }
+  .success-msg {
+    background: #f0fff4;
+    color: #27ae60;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+    text-align: center;
+  }
+
+  /* VIP BADGE */
+  .vip-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ===== MAIN APP (hidden until login) ===== */
+  #app { display: none; }
+  #app.visible { display: block; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(180deg, var(--brown-deep) 0%, #2A1C10 100%);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px var(--shadow-deep);
+  }
+  .header-logo {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-light);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .logo-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--brown-light);
+    font-size: 12px;
+  }
+  .header-right {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .user-greeting {
+    font-size: 13px;
+    color: var(--gold-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .user-greeting strong {
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .btn-logout {
+    padding: 8px 18px;
+    background: transparent;
+    border: 1.5px solid var(--brown-light);
+    color: var(--gold-light);
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Lato', sans-serif;
+  }
+  .btn-logout:hover {
+    background: var(--brown-mid);
+    border-color: var(--gold);
+  }
+  .admin-badge {
+    background: linear-gradient(135deg, #c0392b, #922b21);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+  }
+  .admin-badge:hover { transform: scale(1.05); }
+
+  /* ===== NAV TABS ===== */
+  .nav-tabs {
+    background: var(--brown-deep);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 14px 22px;
+    color: var(--brown-light);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s;
+    white-space: nowrap;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'Lato', sans-serif;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  .nav-tab .tab-icon { font-size: 14px; }
+  .nav-tab .lock-icon {
+    font-size: 10px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.15);
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+
+  /* ===== HERO SECTION ===== */
+  .hero {
+    background: linear-gradient(160deg, var(--brown-deep) 0%, #4A3020 50%, var(--brown-mid) 100%);
+    padding: 60px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  .hero-ornament {
+    font-size: 40px;
+    margin-bottom: 12px;
+    animation: float 4s ease-in-out infinite;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    position: relative;
+    line-height: 1.2;
+  }
+  .hero-title em {
+    color: var(--gold);
+    font-style: italic;
+  }
+  .hero-verse {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(232,213,163,0.8);
+    font-size: 18px;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+  }
+  .hero-ref {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  .stat {
+    text-align: center;
+    color: var(--gold-light);
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--brown-light);
+    font-family: 'Lato', sans-serif;
+  }
+
+  /* ===== CONTENT AREA ===== */
+  .content-area {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .section-icon {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--brown-deep);
+    margin-bottom: 8px;
+  }
+  .section-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 12px auto;
+    border-radius: 2px;
+  }
+  .section-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--brown-light);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ===== COURSE GRID ===== */
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .course-card {
+    background: var(--ivory);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow);
+    border: 1px solid rgba(201,168,76,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .course-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px var(--shadow-deep);
+  }
+
+  .card-banner {
+    height: 120px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-banner::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.15);
+  }
+  .card-banner .banner-icon { position: relative; z-index: 1; }
+
+  .banner-estudos { background: linear-gradient(135deg, #2C4A7C, #1A3055); }
+  .banner-casais { background: linear-gradient(135deg, #7C2C4A, #551A35); }
+  .banner-financas { background: linear-gradient(135deg, #2C7C4A, #1A5530); }
+  .banner-temor { background: linear-gradient(135deg, #6B4A1A, #4A3012); }
+  .banner-fe { background: linear-gradient(135deg, #4A2C7C, #2E1A55); }
+  .banner-oracao { background: linear-gradient(135deg, #4A6B2C, #2E4A1A); }
+  .banner-devocional { background: linear-gradient(135deg, #7C6B2C, #554A1A); }
+  .banner-familia { background: linear-gradient(135deg, #2C5A7C, #1A3D55); }
+
+  .card-body { padding: 20px; }
+  .card-cat {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--brown-deep);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--brown-mid);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-lessons {
+    font-size: 12px;
+    color: var(--sage);
+    font-weight: 700;
+  }
+  .card-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(201,168,76,0.4);
+  }
+  .card-lock {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 700;
+    background: var(--gold-pale);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--gold-light);
+  }
+
+  /* ===== VIDEO PLAYER ===== */
+  .video-section {
+    background: var(--ivory);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px var(--shadow);
+    border: 1px solid rgba(201,168,76,0.2);
+    margin-bottom: 32px;
+  }
+  .video-header {
+    background: linear-gradient(135deg, var(--brown-deep), #2A1C10);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .video-title-area h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-light);
+    font-size: 20px;
+  }
+  .video-title-area span {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--brown-light);
+    font-size: 13px;
+  }
+  .video-player-wrap {
+    background: #0A0705;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .video-placeholder {
+    text-align: center;
+    color: rgba(201,168,76,0.6);
+  }
+  .play-btn {
+    width: 80px; height: 80px;
+    background: rgba(201,168,76,0.2);
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+    transition: all 0.3s;
+    color: var(--gold);
+  }
+  .video-player-wrap:hover .play-btn {
+    background: var(--gold);
+    color: white;
+    transform: scale(1.1);
+  }
+  .video-embed-note {
+    font-size: 14px;
+    color: rgba(201,168,76,0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+  .video-controls {
+    padding: 16px 28px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--gold-light);
+    background: transparent;
+    color: var(--brown-mid);
+    transition: all 0.2s;
+    font-family: 'Lato', sans-serif;
+  }
+  .ctrl-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+  .ctrl-btn.active { background: var(--gold); color: white; border-color: var(--gold); }
+
+  /* ===== PLAYLIST ===== */
+  .playlist {
+    border-left: 4px solid rgba(201,168,76,0.15);
+  }
+  .playlist-header {
+    background: var(--gold-pale);
+    padding: 16px 24px;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--brown-deep);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .playlist-item:hover { background: var(--gold-pale); }
+  .playlist-item.active { background: rgba(201,168,76,0.12); border-left: 3px solid var(--gold); }
+  .pl-num {
+    width: 28px; height: 28px;
+    background: var(--gold-pale);
+    border: 1.5px solid var(--gold-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .pl-item.active .pl-num {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+  }
+  .pl-info { flex: 1; }
+  .pl-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brown-deep);
+    margin-bottom: 2px;
+  }
+  .pl-meta { font-size: 12px; color: var(--brown-light); }
+  .pl-duration { font-size: 12px; color: var(--sage); font-weight: 700; }
+
+  /* ===== AULA AO VIVO ===== */
+  .live-banner {
+    background: linear-gradient(135deg, #1A3055, #2C1A40);
+    border-radius: 18px;
+    padding: 32px;
+    color: white;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .live-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A84C' fill-opacity='0.05'%3E%3Cpath d='M20 20.5V18H0v5h5v5H0v5h20v-2.5c3.314.016 6 2.686 6 6s-2.686 5.984-6 6v2.5h20V30h-5v-5h5V20H20.5z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  .live-icon {
+    font-size: 56px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .live-info { flex: 1; position: relative; }
+  .live-badge-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .live-dot {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(231,76,60,0.2);
+    border: 1px solid #e74c3c;
+    color: #ff6b6b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .live-dot::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: #e74c3c;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .live-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--gold-light);
+    margin-bottom: 6px;
+  }
+  .live-desc { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+  .live-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+  .live-meta-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+  .live-meta-item strong { color: var(--gold); }
+  .live-enter-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: 'Lato', sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .live-enter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(201,168,76,0.4);
+  }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .schedule-card {
+    background: var(--ivory);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid rgba(201,168,76,0.15);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .schedule-day {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .schedule-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--brown-deep);
+    margin-bottom: 6px;
+  }
+  .schedule-time {
+    font-size: 13px;
+    color: var(--brown-light);
+    margin-bottom: 12px;
+  }
+  .schedule-join {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    cursor: pointer;
+    background: var(--gold-pale);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--gold-light);
+    transition: all 0.2s;
+    border-bottom: none;
+    text-decoration: none;
+  }
+  .schedule-join:hover { background: var(--gold); color: white; }
+
+  /* ===== DEVOCIONAL ===== */
+  .devotional-card {
+    background: var(--ivory);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    border: 1px solid rgba(201,168,76,0.2);
+    box-shadow: 0 8px 32px var(--shadow);
+    margin-bottom: 32px;
+  }
+  .devo-date {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .devo-verse {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--brown-deep);
+    line-height: 1.5;
+    font-style: italic;
+    margin-bottom: 10px;
+    max-width: 700px;
+    margin: 0 auto 12px;
+  }
+  .devo-ref {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .devo-text {
+    font-size: 15px;
+    color: var(--brown-mid);
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto 24px;
+  }
+  .devo-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .devo-btn {
+    padding: 10px 22px;
+    border-radius: 25px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Lato', sans-serif;
+    border: 1.5px solid var(--gold-light);
+    background: transparent;
+    color: var(--brown-mid);
+  }
+  .devo-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+  .devo-btn.primary {
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white;
+    border-color: transparent;
+  }
+  .devo-btn.primary:hover { box-shadow: 0 4px 16px rgba(201,168,76,0.4); }
+
+  /* ===== ADMIN PANEL ===== */
+  .admin-panel {
+    background: var(--ivory);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px var(--shadow);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+  .admin-header {
+    background: linear-gradient(135deg, #1a0a0a, #3B0A0A);
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .admin-header h2 {
+    font-family: 'Playfair Display', serif;
+    color: #ff9999;
+    font-size: 22px;
+  }
+  .admin-header p {
+    color: rgba(255,153,153,0.6);
+    font-size: 13px;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 24px 32px;
+    background: var(--cream);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+  .astat {
+    background: var(--ivory);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid rgba(201,168,76,0.15);
+    text-align: center;
+  }
+  .astat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--gold);
+    display: block;
+  }
+  .astat-label { font-size: 12px; color: var(--brown-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  .admin-body { padding: 32px; }
+  .admin-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--brown-deep);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--gold-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .user-table th {
+    background: var(--gold-pale);
+    color: var(--brown-deep);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 11px;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold-light);
+  }
+  .user-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    color: var(--brown-mid);
+    vertical-align: middle;
+  }
+  .user-table tr:hover td { background: var(--gold-pale); }
+  .user-table .status-active {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: #27ae60; font-weight: 700; font-size: 12px;
+  }
+  .user-table .status-active::before {
+    content: ''; width: 7px; height: 7px;
+    background: #27ae60; border-radius: 50%;
+  }
+  .user-table .status-inactive {
+    color: #e74c3c; font-weight: 700; font-size: 12px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .user-table .status-inactive::before {
+    content: ''; width: 7px; height: 7px;
+    background: #e74c3c; border-radius: 50%;
+  }
+
+  .table-action {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    margin-right: 4px;
+    transition: all 0.2s;
+    font-family: 'Lato', sans-serif;
+  }
+  .ta-edit { background: var(--sky-pale); color: var(--sky); }
+  .ta-edit:hover { background: var(--sky); color: white; }
+  .ta-delete { background: #fff0f0; color: #e74c3c; }
+  .ta-delete:hover { background: #e74c3c; color: white; }
+  .ta-toggle { background: #f0fff4; color: #27ae60; }
+  .ta-toggle:hover { background: #27ae60; color: white; }
+  .ta-toggle.inactive { background: #fff0f0; color: #e74c3c; }
+  .ta-toggle.inactive:hover { background: #e74c3c; color: white; }
+
+  .add-user-form {
+    background: var(--cream);
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid var(--gold-light);
+    margin-bottom: 24px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--brown-deep);
+    color: var(--gold-light);
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    z-index: 9999;
+    display: none;
+    animation: slideUpToast 0.3s ease;
+    border-left: 4px solid var(--gold);
+    max-width: 300px;
+  }
+  .toast.show { display: flex; align-items: center; gap: 10px; }
+  .toast.error { border-left-color: #e74c3c; }
+  .toast.success { border-left-color: #27ae60; }
+
+  /* ===== UPGRADE VIP ===== */
+  .vip-upgrade-card {
+    background: linear-gradient(135deg, #2C1A10, #3B2A1A);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+  .vip-upgrade-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%);
+  }
+  .vip-crown { font-size: 48px; margin-bottom: 16px; position: relative; }
+  .vip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    color: var(--gold);
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .vip-desc {
+    color: rgba(255,255,255,0.7);
+    max-width: 500px;
+    margin: 0 auto 24px;
+    font-size: 15px;
+    line-height: 1.7;
+    position: relative;
+  }
+  .vip-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .vip-feature {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13px;
+    color: var(--gold-light);
+  }
+  .vip-feature-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .vip-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: 'Lato', sans-serif;
+    position: relative;
+  }
+  .vip-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(201,168,76,0.5);
+  }
+
+  /* ===== PROFILE ===== */
+  .profile-card {
+    background: var(--ivory);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px var(--shadow);
+    border: 1px solid rgba(201,168,76,0.2);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .profile-banner {
+    background: linear-gradient(135deg, var(--brown-deep), #4A3020);
+    padding: 32px;
+    text-align: center;
+    position: relative;
+  }
+  .profile-avatar {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 14px;
+    border: 3px solid rgba(255,255,255,0.2);
+  }
+  .profile-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+  .profile-email { font-size: 13px; color: var(--brown-light); }
+  .profile-body { padding: 28px 32px; }
+  .profile-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .pstat {
+    text-align: center;
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(201,168,76,0.1);
+  }
+  .pstat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold);
+  }
+  .pstat-label { font-size: 11px; color: var(--brown-light); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUpToast { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
+
+  /* ===================================================
+     RESPONSIVO COMPLETO — TODOS OS TAMANHOS DE TELA
+     =================================================== */
+
+  /* --- TELAS GRANDES (acima de 1400px) --- */
+  @media (min-width: 1400px) {
+    .content-area { max-width: 1320px; padding: 48px 32px; }
+    .hero-title { font-size: 52px; }
+    .courses-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* --- DESKTOP MÉDIO (1024px – 1399px) --- */
+  @media (max-width: 1399px) and (min-width: 1025px) {
+    .content-area { max-width: 1100px; }
+    .courses-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+  }
+
+  /* --- TABLET GRANDE / LAPTOP (769px – 1024px) --- */
+  @media (max-width: 1024px) {
+    header { padding: 0 24px; height: 64px; }
+    .logo-text { font-size: 19px; }
+    .logo-sub { font-size: 11px; }
+    .nav-tabs { padding: 0 24px; }
+    .nav-tab { padding: 12px 16px; font-size: 12px; letter-spacing: 0.5px; }
+    .hero { padding: 50px 28px; }
+    .hero-title { font-size: 36px; }
+    .hero-verse { font-size: 16px; }
+    .hero-stats { gap: 28px; }
+    .stat-number { font-size: 26px; }
+    .content-area { padding: 32px 20px; }
+    .courses-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+    #videoLayout { grid-template-columns: 1fr 300px !important; }
+    .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    .profile-card { max-width: 100%; }
+  }
+
+  /* --- TABLET (481px – 768px) --- */
+  @media (max-width: 768px) {
+    /* Header */
+    header { padding: 0 16px; height: 60px; }
+    .logo-text { font-size: 17px; }
+    .logo-sub { display: none; }
+    .header-right { gap: 10px; }
+    .user-greeting { display: none; }
+    .btn-logout { padding: 6px 14px; font-size: 11px; }
+    .admin-badge { font-size: 10px; padding: 4px 8px; }
+
+    /* Nav */
+    .nav-tabs { padding: 0 8px; }
+    .nav-tab { padding: 11px 14px; font-size: 11px; gap: 5px; }
+    .nav-tab .lock-icon { display: none; }
+
+    /* Notice strip */
+    .notice-strip { font-size: 12px; padding: 8px 14px; }
+
+    /* Hero */
+    .hero { padding: 36px 18px; }
+    .hero-ornament { font-size: 32px; }
+    .hero-title { font-size: 26px; line-height: 1.3; }
+    .hero-verse { font-size: 15px; margin-bottom: 16px; }
+    .hero-ref { font-size: 11px; }
+    .hero-stats { gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .stat-number { font-size: 24px; }
+    .stat-label { font-size: 10px; }
+
+    /* Content */
+    .content-area { padding: 20px 12px; }
+    .section-title { font-size: 26px; }
+    .section-desc { font-size: 15px; }
+
+    /* Cards */
+    .courses-grid { grid-template-columns: 1fr; gap: 16px; }
+    .card-title { font-size: 18px; }
+
+    /* Video layout — stack vertically */
+    #videoLayout { display: flex !important; flex-direction: column !important; }
+    .video-header { padding: 16px 18px; flex-wrap: wrap; gap: 8px; }
+    .video-title-area h3 { font-size: 16px; }
+    .video-controls { padding: 12px 16px; gap: 8px; }
+    .ctrl-btn { padding: 7px 12px; font-size: 11px; }
+
+    /* Live */
+    .live-banner { flex-direction: column; text-align: center; padding: 24px 18px; gap: 18px; }
+    .live-title { font-size: 20px; }
+    .live-meta { justify-content: center; gap: 12px; }
+    .live-enter-btn { width: 100%; justify-content: center; }
+    .schedule-grid { grid-template-columns: 1fr; }
+
+    /* Devocional */
+    .devotional-card { padding: 28px 18px; }
+    .devo-verse { font-size: 20px; }
+    .devo-actions { flex-direction: column; align-items: center; }
+    .devo-btn { width: 100%; max-width: 280px; }
+
+    /* Admin */
+    .admin-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 20px; }
+    .admin-stats { padding: 16px; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .admin-body { padding: 18px 16px; }
+    .admin-section-title { font-size: 17px; }
+    .form-row { grid-template-columns: 1fr; gap: 10px; }
+    .user-table { font-size: 12px; }
+    .user-table th, .user-table td { padding: 9px 10px; }
+    .table-action { padding: 4px 9px; font-size: 10px; }
+
+    /* Profile */
+    .profile-card { max-width: 100%; }
+    .profile-body { padding: 20px 18px; }
+    .profile-stat-row { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .pstat { padding: 12px 8px; }
+    .pstat-num { font-size: 20px; }
+
+    /* Modal */
+    .modal-box { padding: 26px 18px; border-radius: 16px; }
+    .modal-title { font-size: 22px; }
+
+    /* Toast */
+    .toast { bottom: 16px; right: 12px; left: 12px; max-width: none; font-size: 13px; }
+
+    /* VIP upgrade */
+    .vip-upgrade-card { padding: 28px 18px; }
+    .vip-title { font-size: 24px; }
+    .vip-features { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* --- CELULAR PEQUENO (até 480px) --- */
+  @media (max-width: 480px) {
+    /* Header ultra compacto */
+    header { height: 56px; padding: 0 12px; }
+    .logo-icon { width: 34px; height: 34px; font-size: 15px; }
+    .logo-text { font-size: 15px; letter-spacing: 0; }
+    .header-logo { gap: 10px; }
+    .btn-logout { padding: 5px 10px; font-size: 10px; }
+    .admin-badge { padding: 3px 7px; font-size: 9px; }
+
+    /* Nav tabs — ícones menores */
+    .nav-tab { padding: 10px 11px; font-size: 10px; gap: 4px; }
+    .nav-tab .tab-icon { font-size: 13px; }
+
+    /* Hero */
+    .hero { padding: 28px 14px; }
+    .hero-ornament { font-size: 28px; margin-bottom: 8px; }
+    .hero-title { font-size: 22px; }
+    .hero-verse { font-size: 14px; }
+    .hero-stats { display: none; }
+
+    /* Content */
+    .content-area { padding: 16px 10px; }
+    .section-header { margin-bottom: 24px; }
+    .section-icon { font-size: 28px; }
+    .section-title { font-size: 22px; }
+    .section-desc { font-size: 14px; }
+
+    /* Cards — full width */
+    .courses-grid { grid-template-columns: 1fr; gap: 14px; }
+    .card-banner { height: 90px; font-size: 38px; }
+    .card-body { padding: 14px; }
+    .card-title { font-size: 16px; }
+    .card-desc { font-size: 12px; }
+
+    /* Video */
+    .play-btn { width: 60px; height: 60px; font-size: 22px; }
+    .video-embed-note { font-size: 12px; }
+    .video-title-area h3 { font-size: 14px; }
+
+    /* Live */
+    .live-banner { padding: 20px 14px; }
+    .live-icon { font-size: 40px; }
+    .live-title { font-size: 18px; }
+    .live-desc { font-size: 13px; }
+    .live-meta { flex-direction: column; gap: 6px; align-items: center; }
+    .live-meta-item { font-size: 12px; }
+
+    /* Devocional */
+    .devo-verse { font-size: 17px; }
+    .devo-text { font-size: 14px; }
+    .devotional-card { padding: 22px 14px; }
+
+    /* Admin tabela — scroll horizontal */
+    .admin-panel { border-radius: 14px; }
+    .admin-stats { grid-template-columns: repeat(2, 1fr); }
+    .astat-num { font-size: 26px; }
+    .astat-label { font-size: 10px; }
+    .user-table { font-size: 11px; min-width: 520px; }
+
+    /* Profile */
+    .profile-banner { padding: 24px 16px; }
+    .profile-avatar { width: 66px; height: 66px; font-size: 26px; }
+    .profile-name { font-size: 20px; }
+    .profile-stat-row { grid-template-columns: repeat(3, 1fr); }
+    .pstat-num { font-size: 18px; }
+    .pstat-label { font-size: 9px; }
+
+    /* Modal */
+    .modal-box { padding: 22px 14px; border-radius: 14px; }
+    .modal-title { font-size: 20px; }
+    .modal-subtitle { font-size: 13px; }
+    .modal-verse { font-size: 12px; }
+    .form-group input, .form-group select { font-size: 14px; padding: 10px 12px; }
+    .btn-primary { padding: 13px; font-size: 14px; }
+
+    /* Toast */
+    .toast { font-size: 12px; padding: 11px 14px; }
+
+    /* VIP */
+    .vip-features { grid-template-columns: 1fr; }
+    .vip-upgrade-card { padding: 22px 14px; }
+  }
+
+  /* --- CELULAR MUITO PEQUENO (até 360px) --- */
+  @media (max-width: 360px) {
+    .logo-text { font-size: 13px; }
+    .hero-title { font-size: 19px; }
+    .nav-tab { padding: 9px 8px; font-size: 9px; }
+    .nav-tab .tab-icon { font-size: 12px; }
+    .section-title { font-size: 19px; }
+    .card-title { font-size: 15px; }
+    .live-title { font-size: 16px; }
+    .devo-verse { font-size: 15px; }
+  }
+
+  /* Video layout base */
+  .video-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* NOTICE STRIP */
+  .notice-strip {
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 13px;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .notice-strip a { color: white; text-decoration: underline; cursor: pointer; }
+
+  .tag-vip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    background: linear-gradient(135deg, var(--gold), #A87830);
+    color: white; padding: 3px 8px; border-radius: 8px; margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================
+     LOGIN MODAL
+     ========================================= -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <div class="modal-cross">✝</div>
+    <div class="modal-title">Luz da Palavra</div>
+    <div class="modal-subtitle">Plataforma de Ensino Cristão</div>
+    <div class="modal-verse">"A tua palavra é lâmpada para os meus pés e luz para o meu caminho." — Salmos 119:105</div>
+    <div class="error-msg" id="loginError">Login ou senha incorretos.</div>
+    <div class="form-group">
+      <label>E-mail ou usuário</label>
+      <input type="text" id="loginUser" placeholder="Seu e-mail ou usuário" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="Sua senha" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">✦ Entrar</button>
+    <div class="modal-link">Esqueceu a senha? <a onclick="showToast('Entre em contato com o administrador para redefinir sua senha.', 'info')">Contatar administrador</a></div>
+    <div class="modal-link" style="margin-top:8px;">Ainda não é membro? <a onclick="showUpgradeModal()">Conheça o VIP ✦</a></div>
+  </div>
+</div>
+
+<!-- =========================================
+     VIP UPGRADE MODAL (público)
+     ========================================= -->
+<div class="modal-overlay hidden" id="upgradeModal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-cross">👑</div>
+    <div class="modal-title">Acesso VIP</div>
+    <div class="modal-subtitle">Transforme sua vida espiritual com ensino aprofundado</div>
+    <div style="background:var(--gold-pale);border-radius:12px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:13px;color:var(--brown-mid);line-height:1.7;">✦ Estudos Bíblicos completos<br>✦ Curso de Casais<br>✦ Vida Financeira segundo a Bíblia<br>✦ Temor e Fé<br>✦ Aulas ao vivo semanais<br>✦ Videoteca exclusiva<br>✦ Material para download</div>
+    </div>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:13px;color:var(--brown-light);margin-bottom:4px;">Acesso mensal</div>
+      <div style="font-family:'Playfair Display',serif;font-size:36px;color:var(--gold);">R$ 47<span style="font-size:18px;color:var(--brown-light)">/mês</span></div>
+    </div>
+    <button class="btn-primary" onclick="showToast('Para adquirir o VIP, entre em contato pelo WhatsApp!', 'success');hideUpgradeModal()">✦ Quero ser VIP!</button>
+    <button class="btn-secondary" onclick="hideUpgradeModal()">Voltar ao login</button>
+  </div>
+</div>
+
+<!-- =========================================
+     ADD USER MODAL (admin)
+     ========================================= -->
+<div class="modal-overlay hidden" id="addUserModal">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-cross">⚙</div>
+    <div class="modal-title">Novo Acesso VIP</div>
+    <div class="modal-subtitle">Liberar login e senha para membro</div>
+    <div class="error-msg" id="addUserError"></div>
+    <div class="success-msg" id="addUserSuccess"></div>
+    <div class="form-group">
+      <label>Nome Completo</label>
+      <input type="text" id="newName" placeholder="Nome do membro">
+    </div>
+    <div class="form-group">
+      <label>E-mail / Usuário</label>
+      <input type="text" id="newUser" placeholder="email@exemplo.com">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="newPass" placeholder="Senha segura">
+    </div>
+    <div class="form-group">
+      <label>Tipo de Acesso</label>
+      <select id="newRole">
+        <option value="vip">VIP — Acesso Completo</option>
+        <option value="trial">Trial — 7 dias</option>
+      </select>
+    </div>
+    <button class="btn-primary" onclick="createUser()">✦ Liberar Acesso</button>
+    <button class="btn-secondary" onclick="closeAddUserModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- =========================================
+     APP PRINCIPAL
+     ========================================= -->
+<div id="app">
+
+  <!-- NOTICE -->
+  <div class="notice-strip" id="noticeStrip">
+    ✦ Aula Ao Vivo esta semana: Sexta-feira às 20h — <a onclick="switchTab('aovivo')">Clique para entrar na sala</a>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">
+      <div class="logo-icon">✝</div>
+      <div>
+        <div class="logo-text">Luz da Palavra</div>
+        <div class="logo-sub">Plataforma de Ensino Cristão</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-greeting">Bem-vinda(o), <strong id="greetingName">Usuário</strong></div>
+      <button class="admin-badge" id="adminBtn" onclick="switchTab('admin')" style="display:none">⚙ Admin</button>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('inicio')" id="tab-inicio">
+      <span class="tab-icon">🏠</span> Início
+    </button>
+    <button class="nav-tab" onclick="switchTab('estudos')" id="tab-estudos">
+      <span class="tab-icon">📖</span> Estudos Bíblicos <span class="lock-icon">VIP</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('cursos')" id="tab-cursos">
+      <span class="tab-icon">🎓</span> Cursos <span class="lock-icon">VIP</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('videoaulas')" id="tab-videoaulas">
+      <span class="tab-icon">🎬</span> Videoaulas <span class="lock-icon">VIP</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('aovivo')" id="tab-aovivo">
+      <span class="tab-icon">📡</span> Aula Ao Vivo <span class="lock-icon">VIP</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('devocional')" id="tab-devocional">
+      <span class="tab-icon">🌿</span> Devocional
+    </button>
+    <button class="nav-tab" onclick="switchTab('perfil')" id="tab-perfil">
+      <span class="tab-icon">👤</span> Meu Perfil
+    </button>
+    <button class="nav-tab" onclick="switchTab('admin')" id="tab-admin" style="display:none">
+      <span class="tab-icon">⚙</span> Painel Admin
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-ornament">🕊️</div>
+    <h1 class="hero-title">Bem-vinda(o) ao<br><em>Ensino que Transforma</em></h1>
+    <p class="hero-verse">"Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."</p>
+    <p class="hero-ref">João 3:16</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-number">8+</span><span class="stat-label">Cursos</span></div>
+      <div class="stat"><span class="stat-number">120+</span><span class="stat-label">Videoaulas</span></div>
+      <div class="stat"><span class="stat-number">500+</span><span class="stat-label">Membros</span></div>
+      <div class="stat"><span class="stat-number">Semanal</span><span class="stat-label">Aula ao Vivo</span></div>
+    </div>
+  </section>
+
+  <!-- ===== CONTENT ===== -->
+  <div class="content-area">
+
+    <!-- INÍCIO -->
+    <div class="section active" id="section-inicio">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-bottom:32px;">
+        <div class="schedule-card" style="cursor:pointer" onclick="switchTab('estudos')">
+          <div class="schedule-day">✝ Módulo em Destaque</div>
+          <div class="schedule-title">Estudo do Livro de João</div>
+          <div class="schedule-time">52 aulas · Atualizado recentemente</div>
+          <a class="schedule-join" onclick="switchTab('estudos')">📖 Acessar</a>
+        </div>
+        <div class="schedule-card" style="cursor:pointer" onclick="switchTab('aovivo')">
+          <div class="schedule-day" style="color:#e74c3c">⬤ Ao Vivo esta semana</div>
+          <div class="schedule-title">Fé que Move Montanhas</div>
+          <div class="schedule-time">Sexta-feira · 20h00 (Brasília)</div>
+          <a class="schedule-join" onclick="switchTab('aovivo')">📡 Entrar na Sala</a>
+        </div>
+        <div class="schedule-card" style="cursor:pointer" onclick="switchTab('cursos')">
+          <div class="schedule-day">💑 Novo Curso</div>
+          <div class="schedule-title">Casamento pela Bíblia</div>
+          <div class="schedule-time">24 módulos · Para casais e noivos</div>
+          <a class="schedule-join" onclick="switchTab('cursos')">🎓 Ver Curso</a>
+        </div>
+        <div class="schedule-card" style="cursor:pointer" onclick="switchTab('cursos')">
+          <div class="schedule-day">💰 Finanças</div>
+          <div class="schedule-title">Prosperidade com Propósito</div>
+          <div class="schedule-time">16 módulos · Princípios Bíblicos</div>
+          <a class="schedule-join" onclick="switchTab('cursos')">🎓 Ver Curso</a>
+        </div>
+      </div>
+
+      <!-- Versículo do dia highlight -->
+      <div class="devotional-card" style="background:linear-gradient(135deg,var(--brown-deep),#4A3020);color:white;max-width:700px;margin:0 auto 24px;">
+        <div class="devo-date" style="color:var(--gold)">🌅 Versículo da Semana</div>
+        <div class="devo-verse" style="color:var(--gold-light)">"Confie no SENHOR de todo o seu coração e não se apoie em seu próprio entendimento."</div>
+        <div class="devo-ref" style="color:var(--gold);margin-bottom:14px;">Provérbios 3:5</div>
+        <button class="devo-btn primary" onclick="switchTab('devocional')">📿 Ver Devocional Completo</button>
+      </div>
+    </div>
+
+    <!-- ESTUDOS BÍBLICOS -->
+    <div class="section" id="section-estudos">
+      <div class="section-header">
+        <span class="section-icon">📖</span>
+        <h2 class="section-title">Estudos Bíblicos</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">"Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho."</p>
+      </div>
+      <div class="courses-grid" id="estudosGrid"></div>
+    </div>
+
+    <!-- CURSOS -->
+    <div class="section" id="section-cursos">
+      <div class="section-header">
+        <span class="section-icon">🎓</span>
+        <h2 class="section-title">Nossos Cursos</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Formação espiritual em áreas essenciais da vida cristã</p>
+      </div>
+      <div class="courses-grid" id="cursosGrid"></div>
+    </div>
+
+    <!-- VIDEOAULAS -->
+    <div class="section" id="section-videoaulas">
+      <div class="section-header">
+        <span class="section-icon">🎬</span>
+        <h2 class="section-title">Videoteca VIP</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Assista quando e onde quiser, no seu tempo</p>
+      </div>
+      <div class="video-layout" id="videoLayout">
+        <!-- Player -->
+        <div>
+          <div class="video-section">
+            <div class="video-header">
+              <div class="video-title-area">
+                <h3 id="currentVideoTitle">Fundamentos da Fé Cristã</h3>
+                <span id="currentVideoSub">Módulo 1 — Introdução</span>
+              </div>
+              <div class="vip-badge">✦ VIP</div>
+            </div>
+            <div class="video-player-wrap" id="videoPlayerArea">
+              <div class="video-placeholder">
+                <div class="play-btn">▶</div>
+                <div class="video-embed-note">Clique em uma aula para reproduzir<br><small>Cole o link do YouTube/Vimeo no painel admin</small></div>
+              </div>
+            </div>
+            <div class="video-controls">
+              <button class="ctrl-btn active">📌 Marcar como visto</button>
+              <button class="ctrl-btn">⬇ Material da Aula</button>
+              <button class="ctrl-btn">💬 Dúvidas</button>
+            </div>
+          </div>
+        </div>
+        <!-- Playlist -->
+        <div class="video-section playlist">
+          <div class="playlist-header">📋 Lista de Aulas</div>
+          <div id="playlistItems"></div>
+        </div>
+      </div>
+
+    
+    </div>
+
+    <!-- AO VIVO -->
+    <div class="section" id="section-aovivo">
+      <div class="section-header">
+        <span class="section-icon">📡</span>
+        <h2 class="section-title">Aula Ao Vivo</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Encontros ao vivo com ensino bíblico em tempo real</p>
+      </div>
+
+      <div class="live-banner">
+        <div class="live-icon">🎙️</div>
+        <div class="live-info">
+          <div class="live-badge-row">
+            <span class="live-dot">Ao Vivo em breve</span>
+            <span class="vip-badge">✦ VIP</span>
+          </div>
+          <div class="live-title">Fé que Move Montanhas</div>
+          <div class="live-desc">Uma noite especial de ensino e adoração. Traga sua Bíblia e venha aprofundar sua fé com a Palavra de Deus. Haverá tempo para perguntas ao vivo.</div>
+          <div class="live-meta">
+            <div class="live-meta-item">📅 <strong>Sexta-feira, 25/04</strong></div>
+            <div class="live-meta-item">🕗 <strong>20h00 (Brasília)</strong></div>
+            <div class="live-meta-item">👥 <strong>312 inscritos</strong></div>
+          </div>
+        </div>
+        <button class="live-enter-btn" onclick="enterLiveRoom()">📡 Entrar na Sala Ao Vivo</button>
+      </div>
+
+      <h3 class="admin-section-title" style="font-family:'Playfair Display',serif;font-size:20px;color:var(--brown-deep);margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--gold-light);">📅 Programação da Semana</h3>
+      <div class="schedule-grid">
+        <div class="schedule-card">
+          <div class="schedule-day">Segunda-feira</div>
+          <div class="schedule-title">Oração e Intercessão</div>
+          <div class="schedule-time">🕖 19h30 · Todo mês</div>
+          <a class="schedule-join">📡 Entrar</a>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-day">Quarta-feira</div>
+          <div class="schedule-title">Estudo Bíblico ao Vivo</div>
+          <div class="schedule-time">🕖 20h00 · Semanal</div>
+          <a class="schedule-join">📡 Entrar</a>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-day">Sexta-feira</div>
+          <div class="schedule-title">Fé que Move Montanhas</div>
+          <div class="schedule-time">🕖 20h00 · Esta semana</div>
+          <a class="schedule-join" onclick="enterLiveRoom()">📡 Entrar</a>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-day">Sábado</div>
+          <div class="schedule-title">Casais com Propósito</div>
+          <div class="schedule-time">🕗 16h00 · Quinzenal</div>
+          <a class="schedule-join">📡 Entrar</a>
+        </div>
+      </div>
+
+      <!-- Live embed area -->
+      <div id="liveRoomArea" style="display:none;margin-top:28px;">
+        <div class="video-section">
+          <div class="video-header" style="background:linear-gradient(135deg,#1A0A0A,#3B0000);">
+            <div class="video-title-area">
+              <h3 style="color:#ff9999">🔴 Transmissão Ao Vivo</h3>
+              <span style="color:rgba(255,100,100,0.6)">Fé que Move Montanhas</span>
+            </div>
+            <button class="ctrl-btn" onclick="closeLiveRoom()">✕ Fechar Sala</button>
+          </div>
+          <div class="video-player-wrap" style="min-height:400px;">
+            <div class="video-placeholder">
+              <div class="play-btn" style="border-color:#e74c3c;color:#e74c3c">🔴</div>
+              <div class="video-embed-note">Sala ao vivo ativa<br><small>Cole aqui o link de transmissão (YouTube Live, Zoom, Meet)</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEVOCIONAL -->
+    <div class="section" id="section-devocional">
+      <div class="section-header">
+        <span class="section-icon">🌿</span>
+        <h2 class="section-title">Devocional Diário</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Comece seu dia na presença do Senhor</p>
+      </div>
+
+      <div class="devotional-card">
+        <div class="devo-date">🗓 Semana de 21 a 27 de Abril de 2026</div>
+        <div class="devo-verse">"Confie no SENHOR de todo o seu coração e não se apoie em seu próprio entendimento; reconheça-o em todos os seus caminhos, e ele endireitará as suas veredas."</div>
+        <div class="devo-ref">Provérbios 3:5-6</div>
+        <p class="devo-text">Quantas vezes tentamos resolver tudo com nossa própria sabedoria? Deus nos convida a algo mais profundo: confiar. Confiar não significa passividade, mas reconhecer que Ele conhece o fim desde o princípio. Cada passo que damos à luz da Sua Palavra é um ato de fé que agrada ao coração de Deus.</p>
+        <p class="devo-text">Hoje, ao enfrentar decisões, leve-as ao Senhor em oração. Sua bússola é a Palavra; Seu guia é o Espírito Santo. Você não está sozinho.</p>
+        <div class="devo-actions">
+          <button class="devo-btn primary">📿 Orar Agora</button>
+          <button class="devo-btn">📚 Estudo Relacionado</button>
+          <button class="devo-btn">🔔 Receber por E-mail</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+        <div class="schedule-card">
+          <div class="schedule-day">💭 Reflexão</div>
+          <div class="schedule-title">Qual área da minha vida preciso entregar mais ao Senhor?</div>
+          <div class="schedule-time">Anote sua resposta e ore sobre ela.</div>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-day">🙏 Oração do Dia</div>
+          <div class="schedule-title">"Senhor, ensina-me a confiar em Ti..."</div>
+          <div class="schedule-time">Leia devagar, em silêncio.</div>
+        </div>
+        <div class="schedule-card">
+          <div class="schedule-day">📖 Leitura Bíblica</div>
+          <div class="schedule-title">Provérbios 3:1-12</div>
+          <div class="schedule-time">+ Salmo 23 · Filipenses 4:6-7</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="section" id="section-perfil">
+      <div class="section-header">
+        <span class="section-icon">👤</span>
+        <h2 class="section-title">Meu Perfil</h2>
+        <div class="section-divider"></div>
+        <p class="section-desc">Acompanhe sua jornada espiritual</p>
+      </div>
+      <div class="profile-card">
+        <div class="profile-banner">
+          <div class="profile-avatar">✝</div>
+          <div class="profile-name" id="profileName">Usuário VIP</div>
+          <div class="profile-email" id="profileEmail">usuario@email.com</div>
+          <div style="margin-top:12px;"><span class="vip-badge">✦ Membro VIP</span></div>
+        </div>
+        <div class="profile-body">
+          <div class="profile-stat-row">
+            <div class="pstat"><div class="pstat-num">14</div><div class="pstat-label">Aulas Vistas</div></div>
+            <div class="pstat"><div class="pstat-num">3</div><div class="pstat-label">Cursos</div></div>
+            <div class="pstat"><div class="pstat-num">42</div><div class="pstat-label">Dias VIP</div></div>
+          </div>
+          <div class="form-group">
+            <label>Nome</label>
+            <input type="text" id="editName" placeholder="Seu nome">
+          </div>
+          <div class="form-group">
+            <label>E-mail</label>
+            <input type="text" id="editEmail" placeholder="Seu e-mail">
+          </div>
+          <div class="form-group">
+            <label>Nova Senha (deixe em branco para manter)</label>
+            <input type="password" id="editPass" placeholder="Nova senha">
+          </div>
+          <button class="btn-primary" onclick="saveProfile()" style="margin-top:6px;">💾 Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="section" id="section-admin">
+      <div class="admin-panel">
+        <div class="admin-header">
+          <div>
+            <h2>⚙ Painel Administrativo</h2>
+            <p>Acesso exclusivo ao administrador — gerenciamento total de acessos</p>
+          </div>
+          <button onclick="openAddUserModal()" style="padding:10px 20px;background:linear-gradient(135deg,var(--gold),#A87830);color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;font-family:'Lato',sans-serif;">+ Novo Membro</button>
+        </div>
+
+        <div class="admin-stats" id="adminStats">
+          <div class="astat"><span class="astat-num" id="statTotal">3</span><div class="astat-label">Membros Total</div></div>
+          <div class="astat"><span class="astat-num" id="statActive">2</span><div class="astat-label">Ativos</div></div>
+          <div class="astat"><span class="astat-num" id="statVip">2</span><div class="astat-label">VIP</div></div>
+          <div class="astat"><span class="astat-num">8</span><div class="astat-label">Cursos</div></div>
+        </div>
+
+        <div class="admin-body">
+          <div class="admin-section-title">👥 Membros e Acessos</div>
+          <div style="overflow-x:auto;">
+            <table class="user-table" id="userTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nome</th>
+                  <th>E-mail / Usuário</th>
+                  <th>Tipo</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="admin-section-title" style="margin-top:32px;">🔗 Links de Aula ao Vivo</div>
+          <div class="add-user-form">
+            <p style="font-size:13px;color:var(--brown-mid);margin-bottom:14px;">Cole aqui o link do YouTube Live, Zoom ou Google Meet para a transmissão ao vivo.</p>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0">
+                <label>Nome da Aula</label>
+                <input type="text" id="liveName" placeholder="Ex: Fé que Move Montanhas">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>Link da Transmissão</label>
+                <input type="text" id="liveLink" placeholder="https://youtube.com/live/...">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>Data e Hora</label>
+                <input type="text" id="liveDate" placeholder="Sexta, 25/04 às 20h">
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:14px;width:auto;padding:10px 24px;" onclick="saveLiveLink()">💾 Salvar Link</button>
+          </div>
+
+          <div class="admin-section-title">🎬 Links de Videoaulas</div>
+          <div class="add-user-form">
+            <p style="font-size:13px;color:var(--brown-mid);margin-bottom:14px;">Adicione links de vídeo do YouTube (não listado) ou Vimeo para a videoteca.</p>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0">
+                <label>Título da Aula</label>
+                <input type="text" id="videoTitle" placeholder="Ex: Fundamentos da Fé — Aula 01">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>Módulo / Curso</label>
+                <input type="text" id="videoModule" placeholder="Ex: Estudos Bíblicos">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>Link do Vídeo</label>
+                <input type="text" id="videoLink" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label>Duração</label>
+                <input type="text" id="videoDur" placeholder="Ex: 42min">
+              </div>
+            </div>
+            <button class="btn-primary" style="margin-top:14px;width:auto;padding:10px 24px;" onclick="saveVideoLink()">➕ Adicionar Aula</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /app -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✦</span>
+  <span id="toastMsg">Mensagem</span>
+</div>
+
+<script>
+// ============================================
+// DATA & STATE
+// ============================================
+const USERS_KEY = 'luzDaPalavra_users';
+const SESSION_KEY = 'luzDaPalavra_session';
+
+// Dados iniciais
+const defaultUsers = [
+  { id: 1, name: 'Administrador', email: 'admin', password: 'admin123', role: 'admin', active: true },
+  { id: 2, name: 'Maria Fernanda', email: 'maria@email.com', password: 'maria2025', role: 'vip', active: true },
+  { id: 3, name: 'João Pedro', email: 'joao@email.com', password: 'joao2025', role: 'vip', active: false },
+];
+
+function getUsers() {
+  const stored = localStorage.getItem(USERS_KEY);
+  return stored ? JSON.parse(stored) : defaultUsers;
+}
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+function getSession() {
+  const s = sessionStorage.getItem(SESSION_KEY);
+  return s ? JSON.parse(s) : null;
+}
+function setSession(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+// ============================================
+// LOGIN
+// ============================================
+function doLogin() {
+  const userInput = document.getElementById('loginUser').value.trim();
+  const passInput = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+
+  if (!userInput || !passInput) {
+    err.textContent = 'Por favor, preencha todos os campos.';
+    err.style.display = 'block';
+    return;
+  }
+
+  const users = getUsers();
+  const found = users.find(u =>
+    (u.email === userInput || u.name.toLowerCase() === userInput.toLowerCase()) &&
+    u.password === passInput
+  );
+
+  if (!found) {
+    err.style.display = 'block';
+    return;
+  }
+  if (!found.active) {
+    err.textContent = 'Sua conta está inativa. Entre em contato com o administrador.';
+    err.style.display = 'block';
+    return;
+  }
+
+  setSession(found);
+  startApp(found);
+}
+
+document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  clearSession();
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('loginModal').classList.remove('hidden');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+// ============================================
+// APP START — controle total por papel (role)
+// ============================================
+function startApp(user) {
+  document.getElementById('loginModal').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+
+  document.getElementById('greetingName').textContent = user.name.split(' ')[0];
+  document.getElementById('profileName').textContent = user.name;
+  document.getElementById('profileEmail').textContent = user.email;
+  document.getElementById('editName').value = user.name;
+  document.getElementById('editEmail').value = user.email;
+
+  const isAdmin = user.role === 'admin';
+
+  // ── Elementos exclusivos do ADMIN ──
+  // Botão Admin no header
+  document.getElementById('adminBtn').style.display = isAdmin ? 'flex' : 'none';
+  // Aba Admin na nav
+  document.getElementById('tab-admin').style.display = isAdmin ? 'flex' : 'none';
+  // Modal de adicionar usuário — totalmente oculto para não-admin
+  document.getElementById('addUserModal').style.pointerEvents = isAdmin ? 'auto' : 'none';
+  document.getElementById('addUserModal').style.opacity = '0';
+
+  loadEstudos();
+  loadCursos();
+  loadPlaylist();
+  if (isAdmin) renderUserTable();
+}
+
+// ── Guardião: bloqueia acesso admin para clientes em qualquer situação ──
+function isAdminUser() {
+  const s = getSession();
+  return s && s.role === 'admin';
+}
+
+// ============================================
+// TAB SWITCHING — com proteção de acesso
+// ============================================
+function switchTab(tab) {
+  // Bloquear acesso à aba admin para não-admins
+  if (tab === 'admin' && !isAdminUser()) {
+    showToast('⛔ Área restrita ao administrador.', 'error');
+    return;
+  }
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+  const section = document.getElementById('section-' + tab);
+  const navTab  = document.getElementById('tab-' + tab);
+
+  if (section) section.classList.add('active');
+  if (navTab)  navTab.classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Verificar sessão existente ao carregar
+window.addEventListener('DOMContentLoaded', () => {
+  const session = getSession();
+  if (session) {
+    const users = getUsers();
+    const fresh = users.find(u => u.id === session.id);
+    if (fresh && fresh.active) {
+      startApp(fresh);
+    } else {
+      clearSession();
+    }
+  }
+});
+
+
+
+// ============================================
+// CURSOS DATA
+// ============================================
+const estudosData = [
+  { icon: '📖', banner: 'banner-estudos', cat: 'Novo Testamento', title: 'O Evangelho de João', desc: 'Mergulhe no evangelho mais poético e profundo da Bíblia. Descubra quem é Jesus à luz dos sinais e das palavras de vida.', lessons: 52 },
+  { icon: '🌿', banner: 'banner-fe', cat: 'Livros Sapienciais', title: 'Os Salmos — Orações do Coração', desc: 'Cada salmo é uma oração: de louvor, lamento, confiança e esperança. Aprenda a orar com a linguagem da Escritura.', lessons: 40 },
+  { icon: '📜', banner: 'banner-estudos', cat: 'Antigo Testamento', title: 'Gênesis — As Origens', desc: 'Compreenda o mundo à luz da criação, a queda, o dilúvio e os patriarcas. Fundamentos teológicos essenciais.', lessons: 36 },
+  { icon: '✝', banner: 'banner-temor', cat: 'Cartas Paulinas', title: 'Romanos — A Justiça de Deus', desc: 'A mais sistemática das epístolas paulinas. Graça, salvação, fé e obediência no coração da teologia cristã.', lessons: 28 },
+  { icon: '🕊️', banner: 'banner-fe', cat: 'Profetas', title: 'Isaías — O Profeta Messiânico', desc: 'Profecias sobre o Messias, julgamento e restauração. O livro mais citado no Novo Testamento.', lessons: 44 },
+  { icon: '⚓', banner: 'banner-estudos', cat: 'Sabedoria', title: 'Provérbios — Sabedoria para Viver', desc: 'Princípios práticos e eternos para o dia a dia: relacionamentos, trabalho, fala, família e caráter.', lessons: 31 },
+];
+
+const cursosData = [
+  { icon: '💑', banner: 'banner-casais', cat: 'Relacionamentos', title: 'Casamento pela Bíblia', desc: 'Um curso completo para casais e noivos. Comunicação, propósito, sexualidade e espiritualidade no casamento.', lessons: 24 },
+  { icon: '💰', banner: 'banner-financas', cat: 'Finanças', title: 'Prosperidade com Propósito', desc: 'Princípios bíblicos para uma vida financeira saudável. Dízimo, oferta, planejamento e generosidade.', lessons: 16 },
+  { icon: '🙏', banner: 'banner-temor', cat: 'Vida Espiritual', title: 'Temor e Fé — Fundamentos', desc: 'O que significa temer a Deus? Como a fé genuína transforma a vida cotidiana? Um estudo profundo e prático.', lessons: 20 },
+  { icon: '👨‍👩‍👧', banner: 'banner-familia', cat: 'Família', title: 'Família no Plano de Deus', desc: 'Paternidade, maternidade, criação de filhos e estrutura familiar sob a perspectiva bíblica e contemporânea.', lessons: 18 },
+  { icon: '💬', banner: 'banner-oracao', cat: 'Oração', title: 'A Escola da Oração', desc: 'Como orar com eficácia. O Pai Nosso como modelo, intercessão, jejum, e a vida de comunhão com Deus.', lessons: 14 },
+  { icon: '⭐', banner: 'banner-devocional', cat: 'Discipulado', title: 'Vida Devocional Profunda', desc: 'Construa uma rotina de encontro com Deus. Leitura bíblica, meditação, diário espiritual e silêncio.', lessons: 12 },
+];
+
+const playlistData = [
+  { title: 'Fundamentos da Fé — Introdução', module: 'Estudos Bíblicos', dur: '28min' },
+  { title: 'A Graça de Deus', module: 'Estudos Bíblicos', dur: '34min' },
+  { title: 'Temor e Reverência', module: 'Temor e Fé', dur: '41min' },
+  { title: 'Casamento: Propósito Divino', module: 'Curso de Casais', dur: '38min' },
+  { title: 'Finanças: O Dízimo na Bíblia', module: 'Vida Financeira', dur: '29min' },
+  { title: 'Fé que Move Montanhas', module: 'Temor e Fé', dur: '45min' },
+  { title: 'A Família no Éden', module: 'Família', dur: '33min' },
+  { title: 'Oração — O Pai Nosso', module: 'Escola da Oração', dur: '37min' },
+];
+
+function makeCard(d, isVip) {
+  return `
+    <div class="course-card">
+      <div class="card-banner ${d.banner}"><span class="banner-icon">${d.icon}</span></div>
+      <div class="card-body">
+        <div class="card-cat">${d.cat}</div>
+        <div class="card-title">${d.title}</div>
+        <div class="card-desc">${d.desc}</div>
+        <div class="card-meta">
+          <span class="card-lessons">📚 ${d.lessons} aulas</span>
+          ${isVip
+            ? `<button class="card-btn" onclick="switchTab('videoaulas')">▶ Assistir</button>`
+            : `<span class="card-lock">🔒 VIP</span>`
+          }
+        </div>
+      </div>
+    </div>`;
+}
+
+function loadEstudos() {
+  const session = getSession();
+  const isVip = session && (session.role === 'vip' || session.role === 'admin');
+  document.getElementById('estudosGrid').innerHTML = estudosData.map(d => makeCard(d, isVip)).join('');
+}
+function loadCursos() {
+  const session = getSession();
+  const isVip = session && (session.role === 'vip' || session.role === 'admin');
+  document.getElementById('cursosGrid').innerHTML = cursosData.map(d => makeCard(d, isVip)).join('');
+}
+function loadPlaylist() {
+  document.getElementById('playlistItems').innerHTML = playlistData.map((p, i) => `
+    <div class="playlist-item ${i===0?'active':''}" onclick="selectVideo(${i}, '${p.title}', '${p.module}')">
+      <div class="pl-num">${i+1}</div>
+      <div class="pl-info">
+        <div class="pl-title">${p.title}</div>
+        <div class="pl-meta">${p.module}</div>
+      </div>
+      <div class="pl-duration">${p.dur}</div>
+    </div>`).join('');
+}
+function selectVideo(i, title, mod) {
+  document.querySelectorAll('.playlist-item').forEach((el, idx) => {
+    el.classList.toggle('active', idx === i);
+  });
+  document.getElementById('currentVideoTitle').textContent = title;
+  document.getElementById('currentVideoSub').textContent = mod;
+}
+
+// ============================================
+// LIVE ROOM
+// ============================================
+function enterLiveRoom() {
+  document.getElementById('liveRoomArea').style.display = 'block';
+  document.getElementById('liveRoomArea').scrollIntoView({ behavior: 'smooth' });
+  showToast('Sala ao vivo aberta! A transmissão começa em breve.', 'success');
+}
+function closeLiveRoom() {
+  document.getElementById('liveRoomArea').style.display = 'none';
+}
+
+// ============================================
+// ADMIN — USER TABLE
+// ============================================
+function renderUserTable() {
+  if (!isAdminUser()) return;
+  const users = getUsers();
+  const body = document.getElementById('userTableBody');
+  if (!body) return;
+
+  body.innerHTML = users.map((u, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td>
+      <td><span class="${u.role === 'admin' ? 'vip-badge' : 'vip-badge'}">${u.role === 'admin' ? '⚙ Admin' : u.role === 'vip' ? '✦ VIP' : '👤 Trial'}</span></td>
+      <td>${u.active ? '<span class="status-active">Ativo</span>' : '<span class="status-inactive">Inativo</span>'}</td>
+      <td>
+        ${u.role !== 'admin' ? `
+          <button class="table-action ta-toggle ${u.active ? '' : 'inactive'}" onclick="toggleUser(${u.id})">${u.active ? '🔒 Desativar' : '✅ Ativar'}</button>
+          <button class="table-action ta-delete" onclick="deleteUser(${u.id})">🗑 Remover</button>
+        ` : '<em style="color:var(--brown-light);font-size:12px">Administrador</em>'}
+      </td>
+    </tr>`).join('');
+
+  const active = users.filter(u => u.active).length;
+  const vip = users.filter(u => u.role === 'vip').length;
+  const t = document.getElementById('statTotal');
+  const a = document.getElementById('statActive');
+  const v = document.getElementById('statVip');
+  if (t) t.textContent = users.length;
+  if (a) a.textContent = active;
+  if (v) v.textContent = vip;
+}
+
+function toggleUser(id) {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  const users = getUsers();
+  const u = users.find(x => x.id === id);
+  if (u) {
+    u.active = !u.active;
+    saveUsers(users);
+    renderUserTable();
+    showToast(u.active ? `✅ ${u.name} ativado!` : `🔒 ${u.name} desativado.`, u.active ? 'success' : 'info');
+  }
+}
+function deleteUser(id) {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  if (!confirm('Tem certeza que deseja remover este membro?')) return;
+  let users = getUsers();
+  const u = users.find(x => x.id === id);
+  users = users.filter(x => x.id !== id);
+  saveUsers(users);
+  renderUserTable();
+  showToast(`🗑 ${u?.name || 'Membro'} removido.`);
+}
+
+// ============================================
+// ADD USER MODAL
+// ============================================
+function openAddUserModal() {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  document.getElementById('addUserModal').classList.remove('hidden');
+  document.getElementById('addUserModal').style.opacity = '1';
+  document.getElementById('addUserModal').style.pointerEvents = 'auto';
+  document.getElementById('addUserError').style.display = 'none';
+  document.getElementById('addUserSuccess').style.display = 'none';
+}
+function closeAddUserModal() {
+  document.getElementById('addUserModal').classList.add('hidden');
+  document.getElementById('addUserModal').style.opacity = '0';
+  document.getElementById('addUserModal').style.pointerEvents = 'none';
+  document.getElementById('newName').value = '';
+  document.getElementById('newUser').value = '';
+  document.getElementById('newPass').value = '';
+}
+function createUser() {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  const name = document.getElementById('newName').value.trim();
+  const email = document.getElementById('newUser').value.trim();
+  const pass = document.getElementById('newPass').value;
+  const role = document.getElementById('newRole').value;
+  const err = document.getElementById('addUserError');
+  const suc = document.getElementById('addUserSuccess');
+
+  err.style.display = 'none'; suc.style.display = 'none';
+
+  if (!name || !email || !pass) {
+    err.textContent = 'Preencha todos os campos.';
+    err.style.display = 'block';
+    return;
+  }
+
+  const users = getUsers();
+  if (users.find(u => u.email === email)) {
+    err.textContent = 'Este e-mail/usuário já existe.';
+    err.style.display = 'block';
+    return;
+  }
+
+  const newId = Math.max(...users.map(u => u.id)) + 1;
+  users.push({ id: newId, name, email, password: pass, role, active: true });
+  saveUsers(users);
+  renderUserTable();
+
+  suc.textContent = `✦ Acesso liberado para ${name} com sucesso!`;
+  suc.style.display = 'block';
+
+  setTimeout(() => { closeAddUserModal(); showToast(`✦ ${name} adicionado como ${role.toUpperCase()}!`, 'success'); }, 1200);
+}
+
+// ============================================
+// ADMIN — SAVE LINKS
+// ============================================
+function saveLiveLink() {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  const name = document.getElementById('liveName').value.trim();
+  const link = document.getElementById('liveLink').value.trim();
+  if (!name || !link) { showToast('Preencha o nome e o link da aula ao vivo.', 'error'); return; }
+  showToast(`✦ Aula ao vivo "${name}" salva!`, 'success');
+  document.getElementById('liveName').value = '';
+  document.getElementById('liveLink').value = '';
+  document.getElementById('liveDate').value = '';
+}
+function saveVideoLink() {
+  if (!isAdminUser()) { showToast('⛔ Acesso negado.', 'error'); return; }
+  const title = document.getElementById('videoTitle').value.trim();
+  const link = document.getElementById('videoLink').value.trim();
+  if (!title || !link) { showToast('Preencha o título e o link do vídeo.', 'error'); return; }
+  showToast(`✦ Videoaula "${title}" adicionada!`, 'success');
+  document.getElementById('videoTitle').value = '';
+  document.getElementById('videoModule').value = '';
+  document.getElementById('videoLink').value = '';
+  document.getElementById('videoDur').value = '';
+}
+
+// ============================================
+// PROFILE SAVE
+// ============================================
+function saveProfile() {
+  const session = getSession();
+  if (!session) return;
+  const name = document.getElementById('editName').value.trim();
+  const email = document.getElementById('editEmail').value.trim();
+  const pass = document.getElementById('editPass').value;
+
+  const users = getUsers();
+  const u = users.find(x => x.id === session.id);
+  if (u) {
+    u.name = name || u.name;
+    u.email = email || u.email;
+    if (pass) u.password = pass;
+    saveUsers(users);
+    setSession(u);
+    document.getElementById('greetingName').textContent = u.name.split(' ')[0];
+    document.getElementById('profileName').textContent = u.name;
+    document.getElementById('profileEmail').textContent = u.email;
+    showToast('✦ Perfil atualizado com sucesso!', 'success');
+  }
+}
+
+// ============================================
+// UPGRADE MODAL
+// ============================================
+function showUpgradeModal() {
+  document.getElementById('loginModal').classList.add('hidden');
+  document.getElementById('upgradeModal').classList.remove('hidden');
+}
+function hideUpgradeModal() {
+  document.getElementById('upgradeModal').classList.add('hidden');
+  document.getElementById('loginModal').classList.remove('hidden');
+}
+
+// ============================================
+// TOAST
+// ============================================
+let toastTimeout;
+function showToast(msg, type = 'info') {
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  const toastIcon = document.getElementById('toastIcon');
+  clearTimeout(toastTimeout);
+  toastMsg.textContent = msg;
+  toastIcon.textContent = type === 'success' ? '✅' : type === 'error' ? '❌' : '✦';
+  toast.className = 'toast show ' + type;
+  toastTimeout = setTimeout(() => { toast.className = 'toast'; }, 3500);
+}
+</script>
+</body>
+</html>
